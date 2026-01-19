@@ -1,212 +1,262 @@
-"use client";
+import React from "react";
 
-import React, { Fragment } from 'react';
-import Chart from './components/Chart';
+/**
+ * Charts to be plugged in later, e.g.:
+ * import PowerConsumptionChart from "@/components/charts/PowerConsumptionChart";
+ */
 
-const Page = () => {
+type StatusColor = "green" | "orange" | "red" | "blue";
+
+export default function BuildingOverviewPage() {
   return (
-    <Fragment>
-      <div className="bg-gray-100 min-h-screen p-4 space-y-6 overflow-auto">
+    <div className="space-y-6">
 
-        {/* TOP ROW */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Power Health */}
-          <div className="bg-white rounded-xl p-3 shadow-sm">
-            <h3 className="text-xs text-gray-500 mb-2">Power Health</h3>
-            <p className="text-green-600 font-semibold mb-3">⚡ On Grid</p>
+      {/* Top Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+        <SummaryCard
+          title="Total People in Building"
+          value="1,245"
+          subtitle="Inside"
+          status="green"
+        />
+        <SummaryCard
+          title="Power Source"
+          value="GRID"
+          subtitle="Active"
+          status="green"
+        />
+        <SummaryCard
+          title="Diesel Level"
+          value="78%"
+          subtitle="High"
+          status="blue"
+        />
+        <SummaryCard
+          title="Water Availability"
+          value="65%"
+          subtitle="Available"
+          status="blue"
+        />
+        <SummaryCard
+          title="Active Alarms"
+          value="0"
+          subtitle="None"
+          status="green"
+        />
+      </div>
 
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between">
-                <span>Voltage</span>
-                <span>230 V</span>
-              </div>
+      {/* Power + Fire Safety */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-              <div className="flex justify-between">
-                <span>Frequency</span>
-                <span>50 Hz</span>
-              </div>
-            </div>
+        {/* Power & Energy Status */}
+        <div className="xl:col-span-2 rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+          <h3 className="font-semibold text-gray-800 mb-4">
+            Power & Energy Status
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <InfoItem label="Grid Status" value="System OK" />
+            <InfoItem label="Today's Consumption" value="0 min" />
+            <InfoItem label="Last Power Outage" value="None" />
           </div>
 
-          {/* Electricity Consumption */}
-          <div className="bg-white rounded-xl p-3 shadow-sm">
-            <h3 className="text-xs text-gray-500 mb-2">Electricity Consumption</h3>
-
-            <p className="text-2xl font-bold mb-3">
-              352 <span className="text-sm font-normal">kWh</span>
-            </p>
-
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between">
-                <span>Today's</span>
-                <span>100 kWh</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span>Month total</span>
-                <span>10,580 kWh</span>
-              </div>
-
-              <div className="flex justify-between text-gray-500">
-                <span>Jan 15, 2025</span>
-                <span className="font-semibold">₦2,500,000</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Generator Status */}
-          <div className="bg-white rounded-xl p-3 shadow-sm">
-            <h3 className="text-xs text-gray-500 mb-2">Generator Status</h3>
-            <p className="text-yellow-600 font-semibold mb-3">Resting</p>
-
-            <div className="flex justify-between text-sm">
-              <span>Today's runtime</span>
-              <span>4.5 hr</span>
-            </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>Fuel level</span>
-              <span>75%</span>
-            </div>
-          </div>
-
-          {/* Active Alerts */}
-          <div className="bg-white rounded-xl p-3 shadow-sm">
-            <h3 className="text-xs text-gray-500 mb-2">Active Alerts</h3>
-            <p className="text-2xl font-bold mb-3">3</p>
-
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between items-center">
-                <span>Electrical</span>
-                <span className="w-2 h-2 bg-red-500 rounded-full" />
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span>HVAC</span>
-                <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span>Security</span>
-                <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-              </div>
-            </div>
+          {/* Chart Placeholder */}
+          <div className="h-40 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 text-sm">
+            Power Consumption Chart
           </div>
         </div>
 
-        {/* MIDDLE ROW */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Electricity Chart */}
-          <div className="col-span-12 lg:col-span-8 bg-white rounded-xl p-3 shadow-sm">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-xs text-gray-500">Electricity Consumption</h3>
-              <div className="text-xs text-gray-400">Today · Week · Month</div>
-            </div>
+        {/* Fire & Safety Status */}
+        <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+          <h3 className="font-semibold text-gray-800 mb-4">
+            Fire & Safety Status
+          </h3>
 
-            <div className="min-h-[200px]">
-              <Chart />
-            </div>
-          </div>
+          <StatusRow label="Current Status" value="Normal" status="green" />
+          <StatusRow label="Active Alarms" value="None" status="green" />
 
-          {/* Right Side */}
-          <div className="col-span-12 lg:col-span-4 space-y-4">
-            {/* Power Source Timeline */}
-            <div className="bg-white rounded-xl p-3 shadow-sm">
-              <h3 className="text-xs text-gray-500 mb-2">Power Source Timeline</h3>
-
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 bg-blue-500 rounded-full" />
-                  Grid
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 bg-green-500 rounded-full" />
-                  Generator
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 bg-red-500 rounded-full" />
-                  Outage
-                </div>
-              </div>
-            </div>
-
-            {/* Fire Alarm */}
-            <div className="bg-white rounded-xl p-3 shadow-sm">
-              <h3 className="text-xs text-gray-500 mb-2">Fire Alarm & Safety</h3>
-
-              <div className="flex justify-between text-sm">
-                <span>Smoke detectors</span>
-                <span>5</span>
-              </div>
-              <div className="flex justify-between text-sm items-center mt-1">
-                <span>Alarm</span>
-                <span className="w-2 h-2 bg-red-500 rounded-full" />
-              </div>
-              <div className="flex justify-between text-sm mt-1">
-                <span>Last Drill</span>
-                <span>09:45</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* BOTTOM ROW */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Grid Input */}
-          <div className="bg-white rounded-xl p-3 shadow-sm">
-            <h3 className="text-xs text-gray-500 mb-2">Grid Input Parameters</h3>
-
-            <div className="flex justify-between text-sm mt-1">
-              <span>L1 Voltage</span>
-              <span>230 V</span>
-            </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>L2 Voltage</span>
-              <span>231 V</span>
-            </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>Current</span>
-              <span>20.5 A</span>
-            </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>Frequency</span>
-              <span>50 Hz</span>
-            </div>
-          </div>
-
-          {/* Generator Params */}
-          <div className="bg-white rounded-xl p-3 shadow-sm">
-            <h3 className="text-xs text-gray-500 mb-2">Generator Parameters</h3>
-
-            <div className="flex justify-between text-sm mt-1">
-              <span>Running hours</span>
-              <span>4.5 h</span>
-            </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>RPM</span>
-              <span>1500</span>
-            </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>Coolant temp</span>
-              <span>85 °C</span>
-            </div>
-            <div className="flex justify-between text-sm mt-1">
-              <span>Battery voltage</span>
-              <span>13.7 V</span>
-            </div>
-          </div>
-
-          {/* Fuel */}
-          <div className="bg-white rounded-xl p-3 shadow-sm flex flex-col items-center justify-center">
-            <h3 className="text-xs text-gray-500 mb-2">Fuel %</h3>
-
-            <div className="w-20 h-20 rounded-full border-8 border-green-400 flex items-center justify-center text-lg font-semibold">
-              75%
-            </div>
+          <div className="mt-4 space-y-3 text-sm">
+            <SafetyItem text="Water Pump 3 – Green" status="green" />
+            <SafetyItem text="Generated False Events – N/A" status="blue" />
+            <SafetyItem text="Investigate Pump to Vessels" status="orange" />
           </div>
         </div>
       </div>
-    </Fragment>
+
+      {/* Diesel, Water, HVAC */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+        {/* Diesel & Water */}
+        <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+          <h3 className="font-semibold text-gray-800 mb-4">
+            Diesel & Water Overview
+          </h3>
+
+          <DataRow label="Current Source" value="15,300 kWh" />
+          <DataRow label="Generator Runtime" value="15,300 kWh" />
+          <DataRow label="Monthly Diesel Consumption" value="215,000 L" />
+          <DataRow label="Last Refill" value="Dec 10 (5,000 L)" />
+
+          <div className="mt-4 border-t pt-4">
+            <DataRow label="Total Diesel Level" value="78% (78,000 L)" />
+            <DataRow label="Total Water" value="2 Reserve Tanks (40%)" />
+            <DataRow label="Active Pumps" value="8" />
+          </div>
+        </div>
+
+        {/* HVAC & Comfort */}
+        <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+          <h3 className="font-semibold text-gray-800 mb-4">
+            HVAC & Comfort Summary
+          </h3>
+
+          <DataRow label="Total AC Inside" value="Normal" />
+          <DataRow label="Total AC Units" value="85" />
+          <DataRow label="Units ON" value="5" />
+          <DataRow label="Manual Opens" value="Faulty (3)" />
+          <DataRow label="Average Temperature" value="23.5°C" />
+          <DataRow label="Fresh Pumps" value="3 / 4" />
+        </div>
+
+        {/* Activity Log */}
+        <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+          <h3 className="font-semibold text-gray-800 mb-4">
+            Recent Activity
+          </h3>
+
+          <ul className="space-y-3 text-sm">
+            <ActivityItem
+              time="10:34"
+              text="Water Pump 3 Started (John D.)"
+              status="green"
+            />
+            <ActivityItem
+              time="10:12"
+              text="Temp Sensor Fault – AC-08"
+              status="orange"
+            />
+            <ActivityItem
+              time="09:50"
+              text="Power Sensor Triggered – Grid"
+              status="orange"
+            />
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 }
 
-export default Page;
+/* ---------- Reusable Components ---------- */
+
+function SummaryCard({
+  title,
+  value,
+  subtitle,
+  status,
+}: {
+  title: string;
+  value: string;
+  subtitle: string;
+  status: StatusColor;
+}) {
+  const colors: Record<StatusColor, string> = {
+    green: "text-green-600",
+    blue: "text-blue-600",
+    orange: "text-orange-600",
+    red: "text-red-600",
+  };
+
+  return (
+    <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+      <div className="text-sm text-gray-500">{title}</div>
+      <div className={`mt-2 text-xl font-semibold ${colors[status]}`}>
+        {value}
+      </div>
+      <div className="text-xs text-gray-400">{subtitle}</div>
+    </div>
+  );
+}
+
+function InfoItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="text-sm">
+      <div className="text-gray-500">{label}</div>
+      <div className="font-medium text-gray-800">{value}</div>
+    </div>
+  );
+}
+
+function DataRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between text-sm mb-2">
+      <span className="text-gray-500">{label}</span>
+      <span className="font-medium text-gray-800">{value}</span>
+    </div>
+  );
+}
+
+function StatusRow({
+  label,
+  value,
+  status,
+}: {
+  label: string;
+  value: string;
+  status: StatusColor;
+}) {
+  const colors: Record<StatusColor, string> = {
+    green: "text-green-600",
+    blue: "text-blue-600",
+    orange: "text-orange-600",
+    red: "text-red-600",
+  };
+
+  return (
+    <div className="flex justify-between text-sm mb-2">
+      <span className="text-gray-500">{label}</span>
+      <span className={`font-medium ${colors[status]}`}>{value}</span>
+    </div>
+  );
+}
+
+function SafetyItem({
+  text,
+  status,
+}: {
+  text: string;
+  status: StatusColor;
+}) {
+  const colors: Record<StatusColor, string> = {
+    green: "text-green-600",
+    blue: "text-blue-600",
+    orange: "text-orange-600",
+    red: "text-red-600",
+  };
+
+  return <div className={`text-sm ${colors[status]}`}>{text}</div>;
+}
+
+function ActivityItem({
+  time,
+  text,
+  status,
+}: {
+  time: string;
+  text: string;
+  status: StatusColor;
+}) {
+  const colors: Record<StatusColor, string> = {
+    green: "text-green-600",
+    blue: "text-blue-600",
+    orange: "text-orange-600",
+    red: "text-red-600",
+  };
+
+  return (
+    <li className="flex gap-3">
+      <span className="text-xs text-gray-400 w-12">{time}</span>
+      <span className={`text-sm ${colors[status]}`}>{text}</span>
+    </li>
+  );
+}

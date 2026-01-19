@@ -1,187 +1,258 @@
-import React from 'react';
-import { 
-  MdOutlineElectricBolt, 
-  MdOutlineAnalytics, 
-  MdOutlineSdStorage, 
-  MdOutlineReportProblem,
-  MdOutlineTimer, 
-  MdOutlineFactCheck 
-} from 'react-icons/md';
-import { HiOutlineRefresh } from 'react-icons/hi';
-// import ElectricityChart from './ElectricityChart';
-
-const electricityData = [
-  { time: '00:00', kwh: 120, kw: 150 },
-  { time: '04:00', kwh: 110, kw: 140 },
-  { time: '08:00', kwh: 450, kw: 580 },
-  { time: '12:00', kwh: 800, kw: 920 },
-  { time: '16:00', kwh: 750, kw: 880 },
-  { time: '20:00', kwh: 300, kw: 400 },
-  { time: '23:59', kwh: 150, kw: 180 },
-];
-
-export default function ElectricityPage() {
+export default function FireAlarmPage() {
   return (
-    <div className="min-h-screen bg-[#0a0f1c] text-slate-200 p-6 font-sans">
-      
-      {/* SECTION 1: TOP SUMMARY CARDS (GRID STATUS) */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-lg flex items-center gap-4">
-          <div className="p-3 bg-green-500/10 rounded-md">
-            <MdOutlineFactCheck className="text-green-500 text-2xl" />
-          </div>
-          <div>
-            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Grid Feed</p>
-            <h2 className="text-xl font-bold text-green-500 uppercase tracking-tight">Available</h2>
-          </div>
-        </div>
+    <div className="min-h-screen bg-slate-100 p-6 space-y-6">
+      <h1 className="text-2xl font-bold">Fire Alarm & Life Safety</h1>
 
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-lg">
-          <div className="flex justify-between items-start">
-            <p className="text-[10px] text-slate-500 uppercase font-bold">Frequency</p>
-            <HiOutlineRefresh className="text-blue-500 animate-spin-slow" />
-          </div>
-          <h2 className="text-2xl font-mono font-bold mt-1">50.02 <span className="text-xs text-slate-400">Hz</span></h2>
-        </div>
-
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-lg">
-          <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Total Active Power</p>
-          <h2 className="text-2xl font-mono font-bold text-amber-500">742.8 <span className="text-xs text-slate-400 font-normal uppercase">kW</span></h2>
-        </div>
-
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-lg text-blue-400">
-          <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Daily Consumption</p>
-          <h2 className="text-2xl font-mono font-bold">12,450 <span className="text-xs text-slate-400 font-normal uppercase">kWh</span></h2>
-        </div>
+      {/* Top Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <SummaryCard
+          title="Current Alarm Status"
+          value="NORMAL"
+          subtitle="System OK"
+          status="green"
+        />
+        <SummaryCard
+          title="Last Alarm Triggered"
+          value="2 days ago"
+          subtitle="Dec 11, 2025 | 03:15 PM"
+        />
+        <SummaryCard
+          title="Alarm Duration (Minutes)"
+          value="5"
+          subtitle="Last Incident"
+        />
+        <SummaryCard
+          title="Total Alarms This Month"
+          value="3"
+          subtitle="Dec 2025"
+        />
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
-        {/* LEFT COLUMN: LIVE METERING & QUALITY */}
-        <div className="col-span-12 lg:col-span-4 space-y-6">
-          <section className="bg-slate-900 border border-slate-800 rounded-lg p-5">
-            <h3 className="text-xs font-bold text-slate-400 uppercase mb-5 flex items-center gap-2">
-              <MdOutlineElectricBolt className="text-amber-500" /> Phase Analysis
-            </h3>
-            {['L1', 'L2', 'L3'].map((phase, i) => (
-              <div key={phase} className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3 last:border-0 last:mb-0">
-                <span className="text-blue-400 font-bold font-mono">{phase}</span>
-                <div className="text-right">
-                  <p className="text-sm font-mono font-bold">23{i}.{i+4} V</p>
-                  <p className="text-[9px] text-slate-500 uppercase">Voltage</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-mono font-bold">10{20+i} A</p>
-                  <p className="text-[9px] text-slate-500 uppercase">Current</p>
-                </div>
-              </div>
-            ))}
-          </section>
+      {/* Last Alarm Details */}
+      <LastAlarmDetails />
 
-          <section className="bg-slate-900 border border-slate-800 rounded-lg p-5">
-            <h3 className="text-xs font-bold text-slate-400 uppercase mb-4 flex items-center gap-2">
-              <MdOutlineAnalytics className="text-blue-500" /> Power Quality Indices
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-slate-950 p-3 rounded border border-slate-800">
-                <p className="text-[9px] text-slate-500 uppercase font-bold">Power Factor</p>
-                <p className="text-lg font-mono font-bold text-amber-500">0.89 <small className="text-[10px]">Lag</small></p>
-              </div>
-              <div className="bg-slate-950 p-3 rounded border border-slate-800">
-                <p className="text-[9px] text-slate-500 uppercase font-bold">THD (Voltage)</p>
-                <p className="text-lg font-mono font-bold text-green-500">1.2%</p>
-              </div>
-            </div>
-          </section>
+      {/* Zone + Manual Controls */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <ZoneStatus />
+        </div>
+        <ManualControls />
+      </div>
+
+      {/* History + Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <AlarmHistory />
+        </div>
+        <SafetyAlerts />
+      </div>
+    </div>
+  );
+}
+
+/* ================= COMPONENTS ================= */
+
+function SummaryCard({
+  title,
+  value,
+  subtitle,
+  status,
+}: {
+  title: string;
+  value: string;
+  subtitle: string;
+  status?: "green";
+}) {
+  return (
+    <div className="bg-white rounded-xl border shadow-sm p-4 flex justify-between items-center">
+      <div>
+        <p className="text-sm text-slate-500">{title}</p>
+        <p
+          className={`text-2xl font-bold ${
+            status === "green" ? "text-green-600" : ""
+          }`}
+        >
+          {value}
+        </p>
+        <p className="text-xs text-slate-400">{subtitle}</p>
+      </div>
+      {status === "green" && (
+        <div className="h-10 w-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+          ✓
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LastAlarmDetails() {
+  return (
+    <div className="bg-white rounded-xl border shadow-sm p-5 space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="font-semibold">Last Alarm Details</h3>
+        <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
+          Resolved
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div>
+          <p className="font-medium">Dec 11, 2025 | 03:15 PM</p>
+          <p className="text-slate-500">Start Time</p>
+          <p className="mt-2">
+            <span className="font-medium">Cause:</span> Smoke Detector Activation
+          </p>
+          <p>
+            <span className="font-medium">Zone:</span> Floor 3, East Wing
+          </p>
+          <p>
+            <span className="font-medium">Device ID:</span> SD-03
+          </p>
         </div>
 
-        {/* RIGHT COLUMN: MAIN LOAD PROFILE CHART */}
-        <div className="col-span-12 lg:col-span-8">
-          <section className="bg-slate-900 border border-slate-800 rounded-lg p-5 h-full">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Electricity Consumption vs Demand</h3>
-              <div className="flex bg-slate-950 rounded p-1">
-                <button className="px-3 py-1 text-[10px] bg-slate-800 rounded text-white shadow-sm">Today</button>
-                <button className="px-3 py-1 text-[10px] hover:text-white transition-colors">Week</button>
-                <button className="px-3 py-1 text-[10px] hover:text-white transition-colors">Month</button>
-              </div>
-            </div>
-            {/* <ElectricityChart data={electricityData} /> */}
-          </section>
+        <div className="flex items-center justify-center">
+          <div className="w-full h-2 bg-slate-200 rounded relative">
+            <div className="absolute h-2 bg-red-500 rounded w-full" />
+          </div>
         </div>
 
-        {/* BOTTOM SECTION: LOGS & INSIGHTS */}
-        <div className="col-span-12 lg:col-span-8">
-          <section className="bg-slate-900 border border-slate-800 rounded-lg overflow-hidden">
-            <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex justify-between items-center">
-              <h3 className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
-                <MdOutlineSdStorage /> Electrical Activity Log
-              </h3>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[11px]">
-                <thead className="bg-slate-950 text-slate-500 uppercase tracking-tighter">
-                  <tr>
-                    <th className="p-4 font-medium">Timestamp</th>
-                    <th className="p-4 font-medium">Measurement</th>
-                    <th className="p-4 font-medium">Event Detail</th>
-                    <th className="p-4 font-medium text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800 font-mono">
-                  <tr className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-4 text-slate-500">2026-01-18 13:40:01</td>
-                    <td className="p-4 font-bold">L1 Voltage</td>
-                    <td className="p-4">Transient Swell (242V)</td>
-                    <td className="p-4 text-amber-500 text-right font-bold uppercase">Warning</td>
-                  </tr>
-                  <tr className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-4 text-slate-500">2026-01-18 12:15:22</td>
-                    <td className="p-4 font-bold">Grid Freq</td>
-                    <td className="p-4">Normalized to 50.00Hz</td>
-                    <td className="p-4 text-green-500 text-right font-bold uppercase">Nominal</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+        <div className="text-right">
+          <p className="font-medium">Dec 11, 2025 | 03:20 PM</p>
+          <p className="text-slate-500">Stop Time</p>
+          <p className="mt-2 font-medium">Total Duration: 5 Minutes</p>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="col-span-12 lg:col-span-4 space-y-6">
-          <section className="bg-slate-900 border border-slate-800 rounded-lg p-5">
-            <h3 className="text-xs font-bold text-slate-400 uppercase mb-4 flex items-center gap-2">
-              <MdOutlineTimer /> Grid Availability
-            </h3>
-            <div className="flex justify-between text-[11px] mb-2">
-              <span className="text-slate-500 uppercase font-bold">30 Day Uptime</span>
-              <span className="text-blue-400 font-bold">99.982%</span>
-            </div>
-            <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden mb-4">
-              <div className="bg-blue-600 h-full w-[99%] shadow-[0_0_8px_rgba(37,99,235,0.5)]"></div>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-center text-[10px] uppercase font-bold">
-               <div className="bg-slate-950 p-2 rounded border border-slate-800">
-                  <p className="text-slate-500">Outages</p>
-                  <p className="text-lg text-white font-mono">1</p>
-               </div>
-               <div className="bg-slate-950 p-2 rounded border border-slate-800">
-                  <p className="text-slate-500">Duration</p>
-                  <p className="text-lg text-white font-mono">12<small>m</small></p>
-               </div>
-            </div>
-          </section>
+function ZoneStatus() {
+  const zones = [
+    { name: "Floor 1, North Wing", total: 50, active: 50, faulty: 0, status: "NORMAL" },
+    { name: "Floor 2, South Wing", total: 60, active: 58, faulty: 2, status: "FAULT" },
+    { name: "Floor 3, East Wing", total: 45, active: 45, faulty: 0, status: "NORMAL" },
+    { name: "Floor 4, West Wing", total: 55, active: 54, faulty: 1, status: "FAULT" },
+  ];
 
-          <section className="bg-blue-900/10 border border-blue-500/20 rounded-lg p-5">
-            <h3 className="text-xs font-bold text-blue-400 uppercase mb-3 flex items-center gap-2">
-              <MdOutlineReportProblem /> AI Load Insight
-            </h3>
-            <div className="p-3 bg-slate-950/60 rounded border-l-2 border-amber-500 shadow-lg">
-              <p className="text-[11px] font-bold text-amber-200 uppercase tracking-tight">Reactive Power High</p>
-              <p className="text-[10px] text-slate-400 mt-1 leading-relaxed italic">
-                L2 power factor dropping at 14:00. Recommend manual check on Capacitor Bank Stage 3 contactors.
-              </p>
-            </div>
-          </section>
-        </div>
+  return (
+    <div className="bg-white rounded-xl border shadow-sm p-4">
+      <h3 className="font-semibold mb-4">Zone & Device Status</h3>
+
+      <table className="w-full text-sm">
+        <thead className="border-b text-slate-500">
+          <tr>
+            <th className="text-left py-2">Zone Name</th>
+            <th>Detectors</th>
+            <th>Active</th>
+            <th>Faulty</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {zones.map((z) => (
+            <tr key={z.name} className="border-b last:border-none">
+              <td className="py-2">{z.name}</td>
+              <td className="text-center">{z.total}</td>
+              <td className="text-center">{z.active}</td>
+              <td className="text-center">{z.faulty}</td>
+              <td className="text-center">
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    z.status === "NORMAL"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-orange-100 text-orange-700"
+                  }`}
+                >
+                  {z.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ManualControls() {
+  return (
+    <div className="bg-white rounded-xl border shadow-sm p-4 space-y-4">
+      <h3 className="font-semibold">Manual Controls & Acknowledgement</h3>
+
+      <div className="grid grid-cols-3 gap-3">
+        <DisabledButton label="Acknowledge Alarm" />
+        <DisabledButton label="Reset Alarm" />
+        <DisabledButton label="Silence Buzzer" />
+      </div>
+
+      <p className="text-xs text-slate-500 text-center">
+        System in Normal State – Controls Disabled
+      </p>
+    </div>
+  );
+}
+
+function DisabledButton({ label }: { label: string }) {
+  return (
+    <button
+      disabled
+      className="bg-slate-200 text-slate-400 rounded-lg py-6 text-sm cursor-not-allowed"
+    >
+      {label}
+    </button>
+  );
+}
+
+function AlarmHistory() {
+  return (
+    <div className="bg-white rounded-xl border shadow-sm p-4">
+      <h3 className="font-semibold mb-4">Alarm History Log</h3>
+
+      <table className="w-full text-sm">
+        <thead className="border-b text-slate-500">
+          <tr>
+            <th className="text-left py-2">Date</th>
+            <th>Start</th>
+            <th>Stop</th>
+            <th>Duration</th>
+            <th>Cause</th>
+            <th>Zone</th>
+            <th>Action</th>
+            <th>Resolved By</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="py-2">Dec 11, 2025</td>
+            <td className="text-center">03:15 PM</td>
+            <td className="text-center">03:20 PM</td>
+            <td className="text-center">5</td>
+            <td>Smoke Detector</td>
+            <td>Floor 3, East</td>
+            <td>Investigated</td>
+            <td>John D.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function SafetyAlerts() {
+  return (
+    <div className="bg-white rounded-xl border shadow-sm p-4 space-y-3">
+      <h3 className="font-semibold">Alerts & Safety Notifications</h3>
+
+      <div className="flex items-center gap-2 text-green-700 text-sm">
+        ✓ No Active Alarms
+      </div>
+
+      <div className="flex items-center gap-2 text-orange-600 text-sm">
+        ⚠ 2 Faulty Detectors – Floor 2, South Wing
+      </div>
+
+      <div className="flex items-center gap-2 text-orange-600 text-sm">
+        ⚠ 1 Faulty Detector – Floor 4, West Wing
       </div>
     </div>
   );

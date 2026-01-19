@@ -19,126 +19,149 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gradient-to-br from-slate-100 to-slate-200">
 
       {/* SIDEBAR */}
-      <aside className="w-56 bg-gray-800 border-r hidden md:flex flex-col">
-        <div className="py-3 font-bold text-lg text-white text-center">
-          BMS
+      <aside className="hidden md:flex w-64 flex-col bg-slate-900 text-slate-200 shadow-xl">
+        {/* Logo */}
+        <div className="h-16 flex items-center justify-center border-b border-slate-800">
+          <span className="text-xl font-bold tracking-wide text-white">
+            SMART BMS
+          </span>
         </div>
 
-        {/* Sidebar scrolls independently */}
-        <nav className="px-3 space-y-1 text-sm overflow-y-auto flex-1">
-          <a
-            href="/dashboard"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600 text-white font-semibold"
-          >
-            <FaHome />
-            Overview
-          </a>
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 text-sm">
+          <NavItem href="/dashboard" icon={<FaHome />} label="Overview" active />
 
-          <a
+          <NavItem
             href="/dashboard/electricity"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <FaLightbulb className="text-yellow-400" />
-            Electricity
-          </a>
+            icon={<FaLightbulb className="text-yellow-400" />}
+            label="Electricity"
+          />
 
-          <a
+          <NavItem
             href="/dashboard/solar"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <FaSolarPanel className="text-yellow-300" />
-            Solar
-          </a>
+            icon={<FaSolarPanel className="text-amber-300" />}
+            label="Solar"
+          />
 
-          <a
+          <NavItem
             href="/dashboard/generator"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <GiPowerGenerator className="text-green-400" />
-            Generator
-          </a>
+            icon={<GiPowerGenerator className="text-green-400" />}
+            label="Generator"
+          />
 
-          <a
+          <NavItem
             href="/dashboard/diesel"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <BsFillFuelPumpDieselFill className="text-orange-400" />
-            Diesel
-          </a>
+            icon={<BsFillFuelPumpDieselFill className="text-orange-400" />}
+            label="Diesel"
+          />
 
-          <a
+          <NavItem
             href="/dashboard/water"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <IoIosWater className="text-blue-400" />
-            Water
-          </a>
+            icon={<IoIosWater className="text-blue-400" />}
+            label="Water"
+          />
 
-          <a
+          <NavItem
             href="/dashboard/hvac"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <TbAirConditioning className="text-cyan-400" />
-            HVAC
-          </a>
+            icon={<TbAirConditioning className="text-cyan-400" />}
+            label="HVAC"
+          />
 
-          <a
-            href="/dashboard/security"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <GiSecurityGate className="text-purple-400" />
-            Security
-          </a>
+          <NavItem
+            href="/dashboard/securitys"
+            icon={<GiSecurityGate className="text-purple-400" />}
+            label="Security"
+          />
 
-          <a
+          <NavItem
             href="/dashboard/fire-alarm"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <FaFireExtinguisher className="text-red-400" />
-            Fire Alarm
-          </a>
+            icon={<FaFireExtinguisher className="text-red-400" />}
+            label="Fire Alarm"
+          />
 
-          {/* ✅ PPM Schedule */}
-          <a
+          <NavItem
             href="/dashboard/ppm"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <FaCalendarAlt className="text-teal-400" />
-            PPM Schedule
-          </a>
+            icon={<FaCalendarAlt className="text-teal-400" />}
+            label="PPM Schedule"
+          />
 
-          <a
-            href="/dashboard/settings"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-700 hover:text-white"
-          >
-            <IoMdSettings />
-            Settings
-          </a>
+          <div className="pt-3 mt-3 border-t border-slate-800">
+            <NavItem
+              href="/dashboard/settings"
+              icon={<IoMdSettings />}
+              label="Settings"
+            />
+          </div>
         </nav>
+
+        {/* Footer */}
+        <div className="h-12 flex items-center justify-center text-xs text-slate-400 border-t border-slate-800">
+          v1.0 Smart Facility OS
+        </div>
       </aside>
 
       {/* MAIN AREA */}
       <div className="flex flex-col flex-1">
-        {/* HEADER (fixed) */}
-        <header className="h-14 bg-white border-b flex items-center justify-between px-5 shrink-0">
-          <h1 className="text-base font-semibold">Dashboard</h1>
 
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-gray-600">Welcome, User</span>
-            <button className="px-3 py-1 bg-red-500 text-white rounded">
+        {/* HEADER */}
+        <header className="h-16 bg-white/80 backdrop-blur border-b flex items-center justify-between px-6 shadow-sm">
+          <div>
+            <h1 className="text-lg font-semibold text-slate-800">
+              Building Management Dashboard
+            </h1>
+            <p className="text-xs text-slate-500">
+              Real-time facility monitoring
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 text-sm">
+            <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-medium">
+              System Online
+            </span>
+
+            <span className="text-slate-600">Welcome, Admin</span>
+
+            <button className="px-4 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white transition">
               Logout
             </button>
           </div>
         </header>
 
-        {/* ✅ SCROLLABLE CONTENT */}
-        <main className="flex-1 overflow-y-auto p-4">
+        {/* CONTENT */}
+        <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
       </div>
     </div>
   );
 }
+
+/* ---------- Components ---------- */
+
+const NavItem = ({
+  href,
+  icon,
+  label,
+  active = false,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+}) => (
+  <a
+    href={href}
+    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all
+      ${
+        active
+          ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+          : "text-slate-300 hover:bg-slate-800 hover:text-white"
+      }`}
+  >
+    <span className="text-lg">{icon}</span>
+    <span className="font-medium">{label}</span>
+  </a>
+);
