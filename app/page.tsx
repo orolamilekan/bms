@@ -19,7 +19,7 @@ export default function LoginPage() {
     },
     {
       email: "oonaolapo@ng.andersen.com",
-      password: "Adeshola1",
+      password: "Oyindunmade1",
     },
   ];
 
