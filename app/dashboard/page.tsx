@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   FaPeopleLine,
@@ -9,9 +11,22 @@ import {
   FaSnowflake,
   FaClock,
 } from "react-icons/fa6";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+/* ---------- ChartJS Registration ---------- */
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 /* ---------- Helpers ---------- */
-
 const statusColor = {
   green: "text-green-600",
   blue: "text-blue-600",
@@ -20,8 +35,31 @@ const statusColor = {
 };
 
 /* ---------- Page ---------- */
-
 export default function BuildingOverviewPage() {
+  /* Dummy data for Power Consumption Chart */
+  const powerChartData = {
+    labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"],
+    datasets: [
+      {
+        label: "Power Consumption (kWh)",
+        data: [120, 150, 130, 160, 145, 155, 150],
+        borderColor: "#3b82f6",
+        backgroundColor: "rgba(59,130,246,0.2)",
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  };
+
+  const powerChartOptions = {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true },
+      x: { grid: { display: false } },
+    },
+  };
+
   return (
     <div className="space-y-4">
 
@@ -44,8 +82,9 @@ export default function BuildingOverviewPage() {
             <Info label="Last Outage" value="None" />
           </div>
 
-          <div className="h-32 rounded bg-gray-50 flex items-center justify-center text-xs text-gray-400">
-            Power Consumption Chart
+          {/* Chart */}
+          <div className="h-32">
+            <Line data={powerChartData} options={powerChartOptions} />
           </div>
         </Section>
 
@@ -94,7 +133,6 @@ export default function BuildingOverviewPage() {
 }
 
 /* ---------- Components ---------- */
-
 function Section({ title, icon, children, span = 1 }: any) {
   return (
     <div className={`rounded-xl bg-white p-4 shadow-sm border xl:col-span-${span}`}>
