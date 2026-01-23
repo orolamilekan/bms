@@ -1,23 +1,21 @@
-import React from "react";
+"use client";
 
-/**
- * Chart components should be imported later, for example:
- *
- * import TankLevelChart from "@/components/charts/TankLevelChart";
- * import WaterFlowChart from "@/components/charts/WaterFlowChart";
- */
+import React from "react";
+import {
+  FaWater,
+  FaPumpSoap,
+  FaExclamationTriangle,
+  FaCalendarAlt,
+  FaPlay,
+  FaStop,
+  FaArrowRight,
+} from "react-icons/fa";
+
+/* ================= TYPES ================= */
 
 type Status = "normal" | "warning" | "critical";
 
-interface TankCardProps {
-  title: string;
-  levelPercent: number;
-  volume: string;
-  status: Status;
-  pumpName: string;
-  pumpStatus: string;
-  pumpError?: string;
-}
+/* ================= STYLES ================= */
 
 const statusStyles: Record<Status, string> = {
   normal: "bg-green-100 text-green-700",
@@ -25,7 +23,31 @@ const statusStyles: Record<Status, string> = {
   critical: "bg-red-100 text-red-700",
 };
 
-const TankCard: React.FC<TankCardProps> = ({
+/* ================= COMPONENTS ================= */
+
+function SummaryCard({
+  title,
+  value,
+  icon,
+}: {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <div className="bg-white border rounded-lg p-3 shadow-sm flex items-center justify-between">
+      <div>
+        <p className="text-xs text-gray-500">{title}</p>
+        <p className="text-lg font-semibold">{value}</p>
+      </div>
+      <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-sm">
+        {icon}
+      </div>
+    </div>
+  );
+}
+
+function TankCard({
   title,
   levelPercent,
   volume,
@@ -33,59 +55,127 @@ const TankCard: React.FC<TankCardProps> = ({
   pumpName,
   pumpStatus,
   pumpError,
-}) => {
+}: {
+  title: string;
+  levelPercent: number;
+  volume: string;
+  status: Status;
+  pumpName: string;
+  pumpStatus: string;
+  pumpError?: string;
+}) {
   return (
-    <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-800">{title}</h3>
+    <div className="bg-white border rounded-lg p-3 shadow-sm space-y-2">
+      <div className="flex justify-between items-center">
+        <h3 className="text-sm font-semibold flex items-center gap-2">
+          <FaWater className="text-slate-400" />
+          {title}
+        </h3>
         <span
-          className={`px-3 py-1 text-xs font-medium rounded-full ${statusStyles[status]}`}
+          className={`text-xs px-2 py-0.5 rounded-full ${statusStyles[status]}`}
         >
           {status.toUpperCase()}
         </span>
       </div>
 
-      {/* Tank Level Placeholder */}
-      <div className="mb-4">
-        {/* Replace with chart component */}
-        <div className="h-36 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 text-sm">
-          Tank Level Chart ({levelPercent}%)
+      {/* Tank Level */}
+      <div className="h-32 w-20 mx-auto relative border rounded-full bg-gray-50 overflow-hidden">
+        <div
+          className={`absolute bottom-0 w-full ${
+            status === "critical"
+              ? "bg-red-500"
+              : status === "warning"
+              ? "bg-yellow-500"
+              : "bg-blue-500"
+          }`}
+          style={{ height: `${levelPercent}%` }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-gray-700">
+          {levelPercent}%
         </div>
       </div>
 
-      <div className="text-sm text-gray-700 mb-3">
+      <p className="text-xs text-center text-gray-700">
         <span className="font-semibold">{volume}</span> Litres
-      </div>
+      </p>
 
-      <div className="border-t pt-3 text-sm">
+      <div className="border-t pt-2 text-xs space-y-1">
         <div className="flex justify-between text-gray-600">
-          <span>{pumpName}</span>
+          <span className="flex items-center gap-1">
+            <FaPumpSoap />
+            {pumpName}
+          </span>
           <span className="font-medium">{pumpStatus}</span>
         </div>
         {pumpError && (
-          <div className="mt-2 text-xs text-red-600">
+          <div className="text-red-600 text-xs">
             Error: {pumpError}
           </div>
         )}
       </div>
     </div>
   );
-};
+}
+
+function AlertItem({
+  time,
+  message,
+  type,
+}: {
+  time: string;
+  message: string;
+  type: "critical" | "warning" | "success" | "info";
+}) {
+  const colors = {
+    critical: "bg-red-500",
+    warning: "bg-yellow-500",
+    success: "bg-green-500",
+    info: "bg-blue-500",
+  };
+
+  return (
+    <li className="flex gap-3 text-xs">
+      <span className="text-gray-400 w-14">{time}</span>
+      <span className={`w-2 h-2 mt-1 rounded-full ${colors[type]}`} />
+      <span>{message}</span>
+    </li>
+  );
+}
+
+/* ================= PAGE ================= */
 
 export default function WaterManagementPage() {
   return (
-    <div className="space-y-6">
+    <div className="bg-slate-100 min-h-screen p-4 space-y-4">
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <SummaryCard title="Total Water Available" value="55,000 Litres" />
-        <SummaryCard title="Active Pumps" value="3 / 4 Running" />
-        <SummaryCard title="Low Level Alerts" value="2 Tanks Critical" />
-        <SummaryCard title="Last Water Supply" value="Dec 12, 2025 · 4:30 PM" />
+      <h1 className="text-lg font-semibold">Water Management</h1>
+
+      {/* SUMMARY */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+        <SummaryCard
+          title="Total Water Available"
+          value="55,000 Litres"
+          icon={<FaWater />}
+        />
+        <SummaryCard
+          title="Active Pumps"
+          value="3 / 4 Running"
+          icon={<FaPumpSoap />}
+        />
+        <SummaryCard
+          title="Low Level Alerts"
+          value="2 Critical"
+          icon={<FaExclamationTriangle />}
+        />
+        <SummaryCard
+          title="Last Water Supply"
+          value="Dec 12 · 4:30 PM"
+          icon={<FaCalendarAlt />}
+        />
       </div>
 
-      {/* Tank Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* TANKS */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <TankCard
           title="Raw Water Tank"
           levelPercent={85}
@@ -106,7 +196,7 @@ export default function WaterManagementPage() {
         />
 
         <TankCard
-          title="Building Overhead Tank"
+          title="Overhead Tank"
           levelPercent={10}
           volume="1,250"
           status="critical"
@@ -116,106 +206,61 @@ export default function WaterManagementPage() {
         />
       </div>
 
-      {/* Water Flow Diagram Placeholder */}
-      <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-        <h3 className="font-semibold text-gray-800 mb-4">
-          Water Flow Overview
-        </h3>
+      {/* FLOW */}
+      <div className="bg-white border rounded-lg p-3 shadow-sm">
+        <h3 className="text-sm font-semibold mb-2">Water Flow Overview</h3>
 
-        {/* Replace with flow / pipeline visualization */}
-        <div className="h-40 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 text-sm">
-          Water Flow Diagram Component
+        <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
+          <span>Raw</span>
+          <FaArrowRight />
+          <span>Filtration</span>
+          <FaArrowRight />
+          <span>Reserve</span>
+          <FaArrowRight />
+          <span className="text-red-600 font-semibold">Overhead</span>
         </div>
 
-        <div className="mt-4 text-sm text-red-600 font-medium">
+        <p className="mt-2 text-xs text-red-600 font-medium">
           ● Water Flow Stopped
-        </div>
+        </p>
       </div>
 
-      {/* Alerts & Pump Control */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      {/* ALERTS + CONTROL */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
-        {/* Alerts */}
-        <div className="xl:col-span-2 rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-          <h3 className="font-semibold text-gray-800 mb-4">
+        <div className="xl:col-span-2 bg-white border rounded-lg p-3 shadow-sm">
+          <h3 className="text-sm font-semibold mb-3">
             Alerts & Activity Log
           </h3>
-
-          <ul className="space-y-3 text-sm">
-            <AlertItem time="10:05 AM" message="Low Water Alert – Overhead Tank at 10%" type="critical" />
-            <AlertItem time="09:45 AM" message="Pump Fault – Booster Pump Dry Run" type="critical" />
-            <AlertItem time="09:30 AM" message="Pump Started – Raw Water Supply" type="success" />
-            <AlertItem time="08:15 AM" message="Water Supply Received – 10,000 Litres" type="info" />
-            <AlertItem time="07:50 AM" message="Pump Stopped – Filtration Transfer" type="warning" />
+          <ul className="space-y-2">
+            <AlertItem time="10:05" message="Low Water – Overhead Tank 10%" type="critical" />
+            <AlertItem time="09:45" message="Pump Fault – Dry Run" type="critical" />
+            <AlertItem time="09:30" message="Pump Started – Raw Supply" type="success" />
+            <AlertItem time="08:15" message="Water Received – 10,000L" type="info" />
           </ul>
         </div>
 
-        {/* Pump Control */}
-        <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-          <h3 className="font-semibold text-gray-800 mb-4">
-            Pump Control
-          </h3>
+        <div className="bg-white border rounded-lg p-3 shadow-sm space-y-3">
+          <h3 className="text-sm font-semibold">Pump Control</h3>
 
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-gray-600">Auto Pump Control</span>
+          <div className="flex justify-between text-xs">
+            <span>Auto Pump Control</span>
             <span className="text-green-600 font-semibold">ON</span>
           </div>
 
-          <div className="space-y-3">
-            <button
-              disabled
-              className="w-full rounded-lg bg-gray-100 py-2 text-sm text-gray-400 cursor-not-allowed"
-            >
-              Manual Start
-            </button>
-            <button
-              disabled
-              className="w-full rounded-lg bg-gray-100 py-2 text-sm text-gray-400 cursor-not-allowed"
-            >
-              Manual Stop
-            </button>
-          </div>
+          <button disabled className="w-full bg-gray-100 text-xs py-1 rounded flex items-center justify-center gap-2 text-gray-400">
+            <FaPlay /> Manual Start
+          </button>
 
-          <p className="mt-4 text-xs text-gray-400">
-            Manual controls disabled in Auto Mode
+          <button disabled className="w-full bg-gray-100 text-xs py-1 rounded flex items-center justify-center gap-2 text-gray-400">
+            <FaStop /> Manual Stop
+          </button>
+
+          <p className="text-xs text-gray-400">
+            Disabled in Auto Mode
           </p>
         </div>
       </div>
     </div>
-  );
-}
-
-/* ---------- Supporting Components ---------- */
-
-function SummaryCard({ title, value }: { title: string; value: string }) {
-  return (
-    <div className="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-      <div className="text-sm text-gray-500">{title}</div>
-      <div className="mt-2 text-xl font-semibold text-gray-800">{value}</div>
-    </div>
-  );
-}
-
-function AlertItem({
-  time,
-  message,
-  type,
-}: {
-  time: string;
-  message: string;
-  type: "critical" | "warning" | "success" | "info";
-}) {
-  const colors = {
-    critical: "text-red-600",
-    warning: "text-yellow-600",
-    success: "text-green-600",
-    info: "text-blue-600",
-  };
-
-  return (
-    <li className="flex gap-3 items-start">
-      <span className="text-xs text-gray-400 w-16">{time}</span>
-      <span className={`text-sm ${colors[type]}`}>{message}</span>
-    </li>
   );
 }

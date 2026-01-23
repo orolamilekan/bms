@@ -1,323 +1,185 @@
 "use client";
 
-import { useState } from "react";
-import {
-  FiSearch,
-  FiPlus,
-  FiEdit,
-  FiTrash2,
-  FiUser,
-} from "react-icons/fi";
+import React from "react";
+import { FaUser, FaDoorOpen, FaKey, FaTruck, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 
-/* ---------------- Types ---------------- */
-
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  department: string;
-  lastLogin: string;
-  status: "Active" | "Disabled";
-};
-
-/* ---------------- Page ---------------- */
-
-export default function SettingsUserManagementPage() {
-  const [activeTab, setActiveTab] = useState("User Management");
-
+export default function SecurityAccessControlPage() {
   return (
-    <div className="space-y-6">
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-3">
-        {[
-          "User Management",
-          "Roles & Permissions",
-          "Profile Settings",
-          "System Preferences",
-        ].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium border transition
-              ${
-                activeTab === tab
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white text-gray-600 hover:bg-gray-50"
-              }`}
-          >
-            {tab}
-          </button>
-        ))}
+    <div className="min-h-screen bg-slate-100 p-4 space-y-4">
+      {/* Title */}
+      <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+        <FaUser /> Security & Access Control
+      </h1>
+
+      {/* Top Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <StatCard title="Total People in Building" value="1,245" subtitle="Currently Inside" icon={<FaUser />} />
+        <StatCard title="Active Access Codes" value="350" subtitle="Staff & Visitors" icon={<FaKey />} />
+        <StatCard title="Manual Door Opens (Today)" value="15" subtitle="Authorized Overrides" icon={<FaDoorOpen />} />
+        <StatCard title="Delivery Codes Generated" value="28" subtitle="Last 24 Hours" icon={<FaTruck />} />
+        <StatCard title="Confirmed Entries" value="1,180" subtitle="Successfully Validated" icon={<FaCheckCircle />} />
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* User Table */}
-        <div className="xl:col-span-2 rounded-xl bg-white p-5 shadow-sm border">
-          <UserTable />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 space-y-4">
+          <PeopleDirectory />
+          <DoorLogs />
         </div>
 
-        {/* Add User */}
-        <div className="rounded-xl bg-white p-5 shadow-sm border">
-          <AddUserPanel />
+        <div className="space-y-4">
+          <AccessCodeGenerator />
+          <DeliveryStats />
+          <Alerts />
         </div>
-      </div>
-
-      {/* Bottom Panels */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <RolesAccessControl />
-        <ProfileCard />
-        <NotificationPreferences />
       </div>
     </div>
   );
 }
 
-/* ---------------- User Table ---------------- */
+/* ================= COMPONENTS ================= */
 
-function UserTable() {
-  const users: User[] = [
-    {
-      id: 1,
-      name: "Admin User",
-      email: "admin@bms.com",
-      department: "Operations",
-      lastLogin: "07:00 AM",
-      status: "Active",
-    },
-    {
-      id: 2,
-      name: "Technician",
-      email: "tech@bms.com",
-      department: "Maintenance",
-      lastLogin: "10:30 PM",
-      status: "Active",
-    },
-    {
-      id: 3,
-      name: "Viewer",
-      email: "viewer@bms.com",
-      department: "Guest",
-      lastLogin: "09:15 AM",
-      status: "Disabled",
-    },
+function StatCard({ title, value, subtitle, icon }: { title: string; value: string; subtitle: string; icon?: React.ReactNode }) {
+  return (
+    <div className="bg-white rounded-xl border p-3 shadow-sm flex items-center gap-2">
+      {icon && <div className="text-slate-400 w-6 h-6">{icon}</div>}
+      <div>
+        <p className="text-xs text-slate-500">{title}</p>
+        <h2 className="text-lg md:text-xl font-bold">{value}</h2>
+        <p className="text-xs text-slate-400">{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
+function PeopleDirectory() {
+  const people = [
+    { name: "Sarah Johnson", dept: "Marketing", role: "Staff", access: "Level 3", time: "10:15 AM, Dec 13", status: "Inside" },
+    { name: "Michael Lee", dept: "Engineering", role: "Contractor", access: "Level 2", time: "09:30 AM, Dec 13", status: "Inside" },
+    { name: "David Smith", dept: "Visitor", role: "Visitor", access: "Level 1", time: "08:45 AM, Dec 13", status: "Outside" },
   ];
 
   return (
-    <>
-      {/* Search + Actions */}
-      <div className="flex flex-wrap items-center gap-3 mb-4">
-        <div className="relative flex-1">
-          <FiSearch className="absolute left-3 top-2.5 text-gray-400" />
-          <input
-            className="w-full rounded-lg border pl-9 pr-3 py-2 text-sm"
-            placeholder="Search user..."
-          />
-        </div>
-        <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
-          <FiPlus /> Add New User
-        </button>
-      </div>
-
-      {/* Table */}
-      <table className="w-full text-sm">
-        <thead className="text-gray-500 border-b">
+    <div className="bg-white rounded-xl border p-3 shadow-sm overflow-x-auto">
+      <h3 className="font-semibold mb-2 flex items-center gap-1"><FaUser /> People Directory</h3>
+      <table className="w-full text-xs md:text-sm">
+        <thead className="border-b text-slate-500">
           <tr>
-            <th className="py-2 text-left">Full Name</th>
-            <th>Email</th>
+            <th className="text-left py-1">Full Name</th>
             <th>Department</th>
-            <th>Last Login</th>
+            <th>Role</th>
+            <th>Access</th>
+            <th>Last Entry</th>
             <th>Status</th>
-            <th className="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((u) => (
-            <tr key={u.id} className="border-b last:border-0">
-              <td className="py-2">{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.department}</td>
-              <td>{u.lastLogin}</td>
-              <td>
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-medium
-                    ${
-                      u.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-500"
-                    }`}
-                >
-                  {u.status}
+          {people.map((p) => (
+            <tr key={p.name} className="border-b last:border-none">
+              <td className="py-1">{p.name}</td>
+              <td className="text-center">{p.dept}</td>
+              <td className="text-center">{p.role}</td>
+              <td className="text-center">{p.access}</td>
+              <td className="text-center">{p.time}</td>
+              <td className="text-center">
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.status === "Inside" ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
+                  {p.status}
                 </span>
-              </td>
-              <td className="flex justify-end gap-2 py-2">
-                <IconButton icon={<FiEdit />} />
-                <IconButton icon={<FiTrash2 />} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-    </>
-  );
-}
-
-/* ---------------- Add User ---------------- */
-
-function AddUserPanel() {
-  return (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-gray-800">Add New User</h3>
-
-      <Input label="Full Name" />
-      <Input label="Email" />
-      <Select label="Department" options={["Admin", "Technician", "Visitor"]} />
-
-      <Toggle label="Invite via Link Instead of Password" />
-
-      <button className="w-full rounded-lg bg-blue-600 py-2 text-sm text-white hover:bg-blue-700">
-        Create User
-      </button>
     </div>
   );
 }
 
-/* ---------------- Roles ---------------- */
-
-function RolesAccessControl() {
-  const roles = [
-    "View Overview",
-    "Electricity Monitoring",
-    "Generator Monitoring",
-    "HVAC Control",
-    "Fire Alarm Monitoring",
-    "Settings Access",
-  ];
-
+function AccessCodeGenerator() {
   return (
-    <Card title="Roles & Access Control">
-      {roles.map((r) => (
-        <Toggle key={r} label={r} />
-      ))}
-    </Card>
-  );
-}
-
-/* ---------------- Profile ---------------- */
-
-function ProfileCard() {
-  return (
-    <Card>
-      <div className="flex flex-col items-center gap-4">
-        <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-          <FiUser className="text-gray-400 text-3xl" />
-        </div>
-        <input
-          className="w-full rounded-lg border px-3 py-2 text-sm"
-          placeholder="Admin"
-        />
-        <button className="w-full rounded-lg border py-2 text-sm">
-          Change Password
-        </button>
-        <button className="w-full rounded-lg bg-blue-600 py-2 text-sm text-white hover:bg-blue-700">
-          Save Changes
-        </button>
+    <div className="bg-white rounded-xl border p-3 shadow-sm">
+      <h3 className="font-semibold mb-2 flex items-center gap-1"><FaKey /> Access Code Generator</h3>
+      <div className="grid grid-cols-3 gap-2 mb-2">
+        <select className="border rounded p-1 text-xs"><option>Visitor</option></select>
+        <select className="border rounded p-1 text-xs"><option>4 Hours</option></select>
+        <select className="border rounded p-1 text-xs"><option>Main Lobby</option></select>
       </div>
-    </Card>
+      <button className="w-full bg-blue-600 text-white py-2 rounded-lg text-xs font-medium">Generate Access Code</button>
+      <div className="mt-2 bg-slate-50 p-2 rounded-lg text-center">
+        <p className="text-lg font-bold tracking-widest">9284-1057</p>
+        <p className="text-xs text-slate-500">Expires: 02:15 PM, Dec 13</p>
+      </div>
+    </div>
   );
 }
 
-/* ---------------- Notifications ---------------- */
+function DeliveryStats() {
+  return (
+    <div className="bg-white rounded-xl border p-3 shadow-sm">
+      <h3 className="font-semibold mb-2 flex items-center gap-1"><FaTruck /> Delivery Access Tracking</h3>
+      <div className="grid grid-cols-2 gap-2">
+        <StatMini title="Total Codes" value="28" color="green" />
+        <StatMini title="Pending" value="6" color="yellow" />
+        <StatMini title="Manual Opens (Today)" value="15" color="blue" />
+        <StatMini title="Manual Opens (Week)" value="45" color="purple" />
+      </div>
+    </div>
+  );
+}
 
-function NotificationPreferences() {
-  const items = [
-    "Email Alerts",
-    "Push Notifications",
-    "Fault Alerts",
-    "Access Alerts",
+function StatMini({ title, value, color }: { title: string; value: string; color: "green" | "yellow" | "blue" | "purple" }) {
+  const colors: Record<string, string> = { green: "bg-green-100 text-green-700", yellow: "bg-yellow-100 text-yellow-700", blue: "bg-blue-100 text-blue-700", purple: "bg-purple-100 text-purple-700" };
+  return (
+    <div className={`p-2 rounded-lg ${colors[color]}`}>
+      <p className="text-xs">{title}</p>
+      <p className="text-lg font-bold">{value}</p>
+    </div>
+  );
+}
+
+function DoorLogs() {
+  const logs = [
+    { door: "Main Entrance", type: "Access Code", time: "10:25 AM", by: "-" },
+    { door: "Server Room 1", type: "Manual Override", time: "10:18 AM", by: "Admin (John D.)" },
+    { door: "Loading Dock", type: "Access Code", time: "10:00 AM", by: "-" },
   ];
 
   return (
-    <Card title="Notification Preferences">
-      {items.map((i) => (
-        <Toggle key={i} label={i} />
-      ))}
-    </Card>
-  );
-}
-
-/* ---------------- UI Helpers ---------------- */
-
-function Card({
-  title,
-  children,
-}: {
-  title?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl bg-white p-5 shadow-sm border">
-      {title && (
-        <h3 className="mb-4 font-semibold text-gray-800">{title}</h3>
-      )}
-      {children}
+    <div className="bg-white rounded-xl border p-3 shadow-sm overflow-x-auto">
+      <h3 className="font-semibold mb-2 flex items-center gap-1"><FaDoorOpen /> Door Logs</h3>
+      <table className="w-full text-xs md:text-sm">
+        <thead className="border-b text-slate-500">
+          <tr><th className="text-left py-1">Door</th><th>Type</th><th>Time</th><th>Authorized By</th></tr>
+        </thead>
+        <tbody>
+          {logs.map((l, i) => (
+            <tr key={i} className="border-b last:border-none">
+              <td className="py-1">{l.door}</td>
+              <td className="text-center">{l.type}</td>
+              <td className="text-center">{l.time}</td>
+              <td className="text-center">{l.by}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-function Input({ label }: { label: string }) {
-  return (
-    <div>
-      <label className="text-xs text-gray-500">{label}</label>
-      <input className="mt-1 w-full rounded-lg border px-3 py-2 text-sm" />
-    </div>
-  );
-}
+function Alerts() {
+  const alerts = [
+    "Unauthorized Access Attempt at Server Room 1",
+    "Forced Door Open at Emergency Exit 8",
+    "Expired Code Usage Attempt at Main Lobby",
+  ];
 
-function Select({
-  label,
-  options,
-}: {
-  label: string;
-  options: string[];
-}) {
   return (
-    <div>
-      <label className="text-xs text-gray-500">{label}</label>
-      <select className="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
-        {options.map((o) => (
-          <option key={o}>{o}</option>
+    <div className="bg-white rounded-xl border p-3 shadow-sm">
+      <h3 className="font-semibold mb-2 flex items-center gap-1"><FaExclamationTriangle /> Alerts & Notifications</h3>
+      <ul className="space-y-1">
+        {alerts.map((a, i) => (
+          <li key={i} className="bg-red-50 border border-red-200 text-red-700 text-xs p-1 rounded">{a}</li>
         ))}
-      </select>
+      </ul>
     </div>
-  );
-}
-
-function Toggle({ label }: { label: string }) {
-  const [on, setOn] = useState(true);
-  return (
-    <div className="flex items-center justify-between py-2">
-      <span className="text-sm text-gray-600">{label}</span>
-      <button
-        onClick={() => setOn(!on)}
-        className={`w-10 h-5 rounded-full transition ${
-          on ? "bg-green-500" : "bg-gray-300"
-        }`}
-      >
-        <div
-          className={`h-4 w-4 bg-white rounded-full transform transition ${
-            on ? "translate-x-5" : "translate-x-1"
-          }`}
-        />
-      </button>
-    </div>
-  );
-}
-
-function IconButton({ icon }: { icon: React.ReactNode }) {
-  return (
-    <button className="rounded-lg p-2 hover:bg-gray-100 transition">
-      {icon}
-    </button>
   );
 }

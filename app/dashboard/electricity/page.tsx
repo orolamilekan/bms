@@ -1,74 +1,124 @@
+"use client";
+
+import {
+  FaBolt,
+  FaWaveSquare,
+  FaCheckCircle,
+  FaChartLine,
+  FaExclamationTriangle,
+  FaBuilding,
+} from "react-icons/fa";
+
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Tooltip,
+  Filler,
+} from "chart.js";
+
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Tooltip,
+  Filler
+);
+
 export default function ElectricityPage() {
+  const chartData = {
+    labels: ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00"],
+    datasets: [
+      {
+        label: "kW Load",
+        data: [420, 560, 710, 820, 760, 680],
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 3,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: "#f3f4f6" } },
+    },
+  };
+
   return (
     <div className="space-y-6 bg-white p-4">
 
       {/* TOP STATUS CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
         {/* Grid Power */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-3">Grid Powered</h3>
-          <div className="flex flex-col items-center justify-center">
-            <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-              <span className="text-green-600 font-semibold text-sm">Available</span>
-            </div>
-            <p className="text-xs text-gray-500 mt-3">Grid Power</p>
-          </div>
-        </div>
+        <StatusCard
+          title="Grid Powered"
+          icon={<FaBolt size={28} />}
+          color="green"
+          value="Available"
+        />
 
         {/* Voltage & Frequency */}
         <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-2">Voltage & Frequency</h3>
+          <h3 className="text-sm text-gray-600 mb-2 flex items-center gap-2">
+            <FaWaveSquare size={14} /> Voltage & Frequency
+          </h3>
           <div className="text-sm text-gray-500 space-y-1">
             <p>L1: 230V &nbsp; L2: 231V &nbsp; L3: 229V</p>
             <p>Frequency: 50.0 Hz</p>
-            <p>
-              Phase Balance: <span className="text-green-600">OK</span>
+            <p className="flex items-center gap-1">
+              Phase Balance:
+              <span className="text-green-600 flex items-center gap-1">
+                <FaCheckCircle size={12} /> OK
+              </span>
             </p>
           </div>
         </div>
 
         {/* Power Quality */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-3">Power Quality</h3>
-          <div className="flex flex-col items-center justify-center">
-            <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
-              <span className="text-blue-600 font-semibold text-sm">Normal</span>
-            </div>
-            <p className="text-xs text-gray-500 mt-3">Normal</p>
-          </div>
-        </div>
+        <StatusCard
+          title="Power Quality"
+          icon={<FaCheckCircle size={26} />}
+          color="blue"
+          value="Normal"
+        />
       </div>
 
       {/* REAL-TIME LOAD */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-        <h3 className="text-sm text-gray-600 mb-4">Real-Time Electrical Load</h3>
+      <Section title="Real-Time Electrical Load" icon={<FaChartLine />}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard label="Active Power" value="750 kW" />
           <StatCard label="Reactive Power" value="250 kVAR" />
           <StatCard label="Energy Today" value="800 kVA" />
           <StatCard label="Power Factor" value="0.93 PF" />
         </div>
-      </div>
+      </Section>
 
       {/* ENERGY OVERVIEW */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-        <h3 className="text-sm text-gray-600 mb-4">
-          Energy Consumption Overview
-        </h3>
+      <Section title="Energy Consumption Overview" icon={<FaBolt />}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard label="Energy Today" value="8,500 kWh" />
           <StatCard label="Energy This Month" value="150,000 kWh" />
           <StatCard label="Peak Demand" value="980 kW" />
           <StatCard label="Est. Monthly Cost" value="$18,000" />
         </div>
-      </div>
+      </Section>
 
       {/* FLOOR & WING CONSUMPTION */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-        <h3 className="text-sm text-gray-600 mb-4">
-          Electricity Consumption by Floor & Wing
-        </h3>
-
+      <Section title="Electricity Consumption by Floor & Wing" icon={<FaBuilding />}>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-gray-500">
             <thead className="border-b border-gray-200 text-gray-600">
@@ -80,63 +130,27 @@ export default function ElectricityPage() {
               </tr>
             </thead>
             <tbody>
-              <FloorRow
-                floor="Ground Floor"
-                verakki="120 kW / 1,450 kWh"
-                andersen="95 kW / 1,120 kWh"
-                total="215 kW"
-              />
-              <FloorRow
-                floor="1st Floor"
-                verakki="140 kW / 1,780 kWh"
-                andersen="110 kW / 1,390 kWh"
-                total="250 kW"
-              />
-              <FloorRow
-                floor="2nd Floor"
-                verakki="130 kW / 1,620 kWh"
-                andersen="100 kW / 1,280 kWh"
-                total="230 kW"
-              />
-              <FloorRow
-                floor="3rd Floor"
-                verakki="115 kW / 1,410 kWh"
-                andersen="90 kW / 1,050 kWh"
-                total="205 kW"
-              />
+              <FloorRow floor="Ground Floor" verakki="120 kW / 1,450 kWh" andersen="95 kW / 1,120 kWh" total="215 kW" />
+              <FloorRow floor="1st Floor" verakki="140 kW / 1,780 kWh" andersen="110 kW / 1,390 kWh" total="250 kW" />
+              <FloorRow floor="2nd Floor" verakki="130 kW / 1,620 kWh" andersen="100 kW / 1,280 kWh" total="230 kW" />
+              <FloorRow floor="3rd Floor" verakki="115 kW / 1,410 kWh" andersen="90 kW / 1,050 kWh" total="205 kW" />
             </tbody>
           </table>
         </div>
-      </div>
+      </Section>
 
       {/* CONSUMPTION GRAPH */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm text-gray-600">
-            Electricity Consumption
-          </h3>
-          <div className="space-x-2">
-            <button className="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded">
-              Today
-            </button>
-            <button className="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded">
-              Week
-            </button>
-            <button className="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded">
-              Month
-            </button>
-          </div>
+      <Section title="Electricity Consumption" icon={<FaChartLine />}>
+        <div className="h-56">
+          <Line data={chartData} options={chartOptions} />
         </div>
+      </Section>
 
-        <div className="h-56 flex items-center justify-center text-gray-400 text-sm border border-dashed border-gray-300 rounded">
-          Chart goes here (Recharts / Chart.js)
-        </div>
-      </div>
-
-      {/* ALERTS & INSIGHTS */}
+      {/* ALERTS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <InfoCard
           title="Electrical Alarms & Alerts"
+          icon={<FaExclamationTriangle />}
           items={[
             "Voltage imbalance on L1 (1.5%) – Friday",
             "No active alarms",
@@ -144,6 +158,7 @@ export default function ElectricityPage() {
         />
         <InfoCard
           title="Grid Availability & Reliability"
+          icon={<FaBolt />}
           items={[
             "Grid uptime (30 days): 93.9%",
             "Total outage duration: 45 minutes",
@@ -151,68 +166,90 @@ export default function ElectricityPage() {
         />
         <InfoCard
           title="Smart Energy Insights"
+          icon={<FaChartLine />}
           items={[
             "Low power factor detected last week",
             "Peak demand occurs between 14:00 – 15:00",
           ]}
         />
       </div>
-
-      {/* EVENT LOG */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-        <h3 className="text-sm text-gray-600 mb-3">
-          Event & Alarm Logs
-        </h3>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-gray-500">
-            <thead className="text-gray-600 border-b border-gray-200">
-              <tr>
-                <th className="py-2 text-left">Timestamp</th>
-                <th className="py-2 text-left">Type</th>
-                <th className="py-2 text-left">Description</th>
-                <th className="py-2 text-left">Severity</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-gray-200">
-                <td className="py-2">2024-10-26 14:55</td>
-                <td>ALARM</td>
-                <td>Voltage imbalance detected</td>
-                <td className="text-red-500">Critical</td>
-              </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2">2024-10-26 16:08</td>
-                <td>EVENT</td>
-                <td>Peak demand recorded (950 kW)</td>
-                <td className="text-blue-500">Info</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
   );
 }
 
-/* SMALL COMPONENTS */
+/* ---------- SMALL COMPONENTS ---------- */
+
+function Section({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+      <h3 className="text-sm text-gray-600 mb-4 flex items-center gap-2">
+        {icon} {title}
+      </h3>
+      {children}
+    </div>
+  );
+}
+
+function StatusCard({
+  title,
+  value,
+  icon,
+  color,
+}: {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  color: "green" | "blue";
+}) {
+  const styles =
+    color === "green"
+      ? "bg-green-100 text-green-600"
+      : "bg-blue-100 text-blue-600";
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+      <h3 className="text-sm text-gray-600 mb-3">{title}</h3>
+      <div className="flex flex-col items-center">
+        <div className={`w-20 h-20 rounded-full flex items-center justify-center ${styles}`}>
+          {icon}
+        </div>
+        <p className="text-xs text-gray-500 mt-3">{value}</p>
+      </div>
+    </div>
+  );
+}
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="bg-gray-50 rounded-lg p-3 shadow-sm">
       <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-lg font-semibold text-gray-700 mt-1">
-        {value}
-      </p>
+      <p className="text-lg font-semibold text-gray-700 mt-1">{value}</p>
     </div>
   );
 }
 
-function InfoCard({ title, items }: { title: string; items: string[] }) {
+function InfoCard({
+  title,
+  items,
+  icon,
+}: {
+  title: string;
+  items: string[];
+  icon: React.ReactNode;
+}) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-      <h3 className="text-sm text-gray-600 mb-3">{title}</h3>
+      <h3 className="text-sm text-gray-600 mb-3 flex items-center gap-2">
+        {icon} {title}
+      </h3>
       <ul className="text-sm text-gray-500 space-y-2">
         {items.map((item, i) => (
           <li key={i}>• {item}</li>
@@ -238,9 +275,7 @@ function FloorRow({
       <td className="py-2 font-medium text-gray-700">{floor}</td>
       <td className="py-2">{verakki}</td>
       <td className="py-2">{andersen}</td>
-      <td className="py-2 font-semibold text-gray-700">
-        {total}
-      </td>
+      <td className="py-2 font-semibold text-gray-700">{total}</td>
     </tr>
   );
 }

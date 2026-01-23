@@ -1,17 +1,59 @@
 // app/dashboard/maintenance/page.tsx
 import React from "react";
+import {
+  Calendar,
+  ClipboardList,
+  AlertTriangle,
+  Clock,
+  CheckCircle,
+  Wrench,
+  Upload,
+  Edit3,
+  MessageSquare,
+  Check
+} from "lucide-react";
 
 export default function PreventiveMaintenancePage() {
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
 
       {/* Top Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
-        <StatCard title="Tasks Due Today" value="5" status="Normal" color="green" />
-        <StatCard title="Upcoming Today" value="12" status="Normal" color="orange" />
-        <StatCard title="Overdue" value="3" status="Next 7 Days" color="red" />
-        <StatCard title="Upcoming Tasks" value="12" status="Next 7 Days" color="yellow" />
-        <StatCard title="Completed Actions" value="45" status="Immediate Action" color="red" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-5">
+        <StatCard
+          title="Tasks Due Today"
+          value="5"
+          status="Normal"
+          color="green"
+          icon={<ClipboardList />}
+        />
+        <StatCard
+          title="Upcoming Today"
+          value="12"
+          status="Normal"
+          color="orange"
+          icon={<Clock />}
+        />
+        <StatCard
+          title="Overdue"
+          value="3"
+          status="Next 7 Days"
+          color="red"
+          icon={<AlertTriangle />}
+        />
+        <StatCard
+          title="Upcoming Tasks"
+          value="12"
+          status="Next 7 Days"
+          color="yellow"
+          icon={<Calendar />}
+        />
+        <StatCard
+          title="Completed Actions"
+          value="45"
+          status="Immediate Action"
+          color="red"
+          icon={<CheckCircle />}
+        />
       </div>
 
       {/* Middle Section */}
@@ -32,12 +74,14 @@ export default function PreventiveMaintenancePage() {
 
         {/* Maintenance Calendar */}
         <Card title="Maintenance Calendar View">
-          <div className="grid grid-cols-7 gap-2 text-center text-sm">
+          <div className="grid grid-cols-7 gap-2 text-center text-xs text-gray-600">
             {Array.from({ length: 30 }).map((_, i) => (
               <div
                 key={i}
-                className={`p-2 rounded-md border ${
-                  i === 10 ? "bg-orange-200" : "bg-white"
+                className={`h-10 flex items-center justify-center rounded-lg border ${
+                  i === 10
+                    ? "bg-orange-100 border-orange-300 text-orange-700 font-semibold"
+                    : "bg-white"
                 }`}
               >
                 {i + 1}
@@ -50,7 +94,9 @@ export default function PreventiveMaintenancePage() {
         <Card title="Task Details">
           <div className="space-y-4 text-sm">
             <div>
-              <p className="font-semibold">AHU-1 B – Filter Replacement</p>
+              <p className="font-semibold text-gray-800">
+                AHU-1 B – Filter Replacement
+              </p>
               <p className="text-gray-500">
                 Replace filters and inspect airflow efficiency
               </p>
@@ -62,11 +108,19 @@ export default function PreventiveMaintenancePage() {
               <ChecklistItem text="Installed New Filters" />
             </ul>
 
-            <div className="flex flex-wrap gap-2">
-              <Button variant="green">Mark as Completed</Button>
-              <Button variant="blue">Add Remarks</Button>
-              <Button variant="gray">Upload Support</Button>
-              <Button variant="outline">Edit</Button>
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button variant="green" icon={<CheckCircle size={16} />}>
+                Mark as Completed
+              </Button>
+              <Button variant="blue" icon={<MessageSquare size={16} />}>
+                Add Remarks
+              </Button>
+              <Button variant="gray" icon={<Upload size={16} />}>
+                Upload Support
+              </Button>
+              <Button variant="outline" icon={<Edit3 size={16} />}>
+                Edit
+              </Button>
             </div>
           </div>
         </Card>
@@ -88,17 +142,18 @@ export default function PreventiveMaintenancePage() {
   );
 }
 
-/* -------------------- Reusable Components -------------------- */
+/* -------------------- Components -------------------- */
 
 type StatProps = {
   title: string;
   value: string;
   status: string;
   color: "green" | "orange" | "red" | "yellow";
+  icon: React.ReactNode;
 };
 
-function StatCard({ title, value, status, color }: StatProps) {
-  const colors: Record<string, string> = {
+function StatCard({ title, value, status, color, icon }: StatProps) {
+  const styles: Record<string, string> = {
     green: "bg-green-100 text-green-700",
     orange: "bg-orange-100 text-orange-700",
     red: "bg-red-100 text-red-700",
@@ -106,10 +161,19 @@ function StatCard({ title, value, status, color }: StatProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow">
-      <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-2xl font-bold mt-1">{value}</p>
-      <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs ${colors[color]}`}>
+    <div className="bg-white rounded-2xl p-5 shadow-sm">
+      <div className="flex items-center gap-4">
+        <div className={`p-3 rounded-xl ${styles[color]}`}>
+          {icon}
+        </div>
+        <div>
+          <p className="text-xs text-gray-500">{title}</p>
+          <p className="text-2xl font-bold text-gray-800">{value}</p>
+        </div>
+      </div>
+      <span
+        className={`inline-block mt-4 px-3 py-1 rounded-full text-xs font-medium ${styles[color]}`}
+      >
         {status}
       </span>
     </div>
@@ -118,8 +182,8 @@ function StatCard({ title, value, status, color }: StatProps) {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl shadow p-4">
-      <h3 className="font-semibold mb-4">{title}</h3>
+    <div className="bg-white rounded-2xl shadow-sm p-5">
+      <h3 className="font-semibold text-gray-800 mb-4">{title}</h3>
       {children}
     </div>
   );
@@ -132,7 +196,7 @@ function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
         <thead>
           <tr className="text-left text-gray-500 border-b">
             {headers.map((h) => (
-              <th key={h} className="pb-2">{h}</th>
+              <th key={h} className="pb-2 font-medium">{h}</th>
             ))}
           </tr>
         </thead>
@@ -140,7 +204,7 @@ function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b last:border-0">
               {row.map((cell, j) => (
-                <td key={j} className="py-2">{cell}</td>
+                <td key={j} className="py-2 text-gray-700">{cell}</td>
               ))}
             </tr>
           ))}
@@ -152,18 +216,22 @@ function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
 
 function ChecklistItem({ text }: { text: string }) {
   return (
-    <div className="flex items-center gap-2">
-      <input type="checkbox" checked readOnly className="accent-green-600" />
-      <span>{text}</span>
+    <div className="flex items-center gap-2 text-gray-700">
+      <span className="p-1 rounded-full bg-green-100 text-green-700">
+        <Check size={14} />
+      </span>
+      {text}
     </div>
   );
 }
 
 function Button({
   children,
+  icon,
   variant = "green",
 }: {
   children: React.ReactNode;
+  icon?: React.ReactNode;
   variant?: "green" | "blue" | "gray" | "outline";
 }) {
   const styles: Record<string, string> = {
@@ -174,7 +242,10 @@ function Button({
   };
 
   return (
-    <button className={`px-4 py-2 rounded-lg text-sm ${styles[variant]}`}>
+    <button
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${styles[variant]}`}
+    >
+      {icon}
       {children}
     </button>
   );
